@@ -2,6 +2,7 @@ package com.gujun.springbootrabbitmq01.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.gujun.springbootrabbitmq01.entity.Employee;
 import com.gujun.springbootrabbitmq01.service.EmployeeService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 public class SendMessageController {
@@ -26,7 +29,9 @@ public class SendMessageController {
         jsonObject.put("result","success");
         jsonObject.put("employee",employee.toString());
         //将携带了路由键值testDirectRouting的消息发送到交换机testDirectExchange；✳
-        rabbitTemplate.convertAndSend("testDirectExchange","testDirectRouting",jsonObject);
+        rabbitTemplate.convertAndSend("testDirectExchange","testDirectRouting",JSONObject.parseObject(
+                jsonObject.toJSONString(),new TypeReference<Map<String, String>>(){}    //JSONObject->Map
+        ));
         return jsonObject;
     }
 
