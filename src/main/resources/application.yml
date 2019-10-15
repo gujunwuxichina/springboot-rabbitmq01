@@ -1,0 +1,83 @@
+server:
+  servlet:
+    context-path:
+  port: 8091
+spring:
+  application:
+    name: springboot-rabbitmq01
+
+  datasource:
+    # mysql
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/test01?serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #配置初始化大小/最小/最大
+    initial-size: 1
+    min-idle: 1
+    max-active: 20
+    test-on-borrow: true
+    max-wait: 60000
+    #间隔多久进行一次检测，检测需要关闭的空闲连接
+    time-between-eviction-runs-millis: 60000
+    #一个连接在池中最小生存的时间
+    min-evictable-idle-time-millis: 300000
+    validation-query: SELECT 'x'
+    test-While-Idle: true
+    test-on-return: false
+    #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
+    pool-prepared-statements: false
+    max-pool-prepared-statement-per-connection-size: 20
+
+    #redis
+    redis:
+      database: 1
+      host: 127.0.0.1
+      port: 6379
+      timeout: 10800
+      jedis:
+        pool: #连接池此处应该是JedisPoolConfig
+          min-idle: 5 #最小空闲数
+          max-active: 10  #最大连接数
+          max-idle: 10    #最大空闲数
+          max-wait: 2000  #最大等待时间
+  servlet:
+    #文件上传
+    multipart:
+      #指定默认上传的位置
+      location: d:/Yun_Files
+      #限制单个文件大小
+      max-file-size: 5MB
+      #限制所有文件大小
+      max-request-size: 10MB
+
+  #rabbitMQ
+  rabbitmq:
+    host: 127.0.01
+    port: 5672
+    username: guest
+    password: guest
+    #是否确认发送的消息已被消费
+    publisher-confirms: true
+    #如下，自定义配置项（队列名称）
+    queue:
+      testDirectQueue: test-direct-queue
+    #虚拟host，可以不设置使用server默认host
+#    virtual-host: JCcccHost
+    #消息确认配置：
+    #消息已发送到交换机回调
+    publisher-confirm: true
+    #消息已发送到队列回调
+    publisher-returns: true
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/*Mapper.xml
+  #mybatis扫描包别名，和注解@Alias联用
+  type-aliases-package: com.gujun.springbootrabbitmq01.entity
+  #配置typeHandler扫描包
+  type-handlers-package: com.gujun.springbootrabbitmq01.typehandler
+
+
+
